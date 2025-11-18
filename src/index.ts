@@ -14,15 +14,15 @@ import { onError } from "./middleware/error";
 import { authRoute } from "./auth/auth.route";
 import { handleAuth } from "./middleware/auth";
 
-// db.execute("SELECT 1")
-//   .then((res) => {
-//     console.info("Database connected!");
-//   })
-//   .catch((err) => {
-//     console.error("Database connection failed 🚨");
-//     console.error("Database error: " + err);
-//     console.error("Exiting...");
-//   });
+db.execute("SELECT 1")
+  .then((res) => {
+    console.info("Database connected!");
+  })
+  .catch((err) => {
+    console.error("Database connection failed 🚨");
+    console.error("Database error: " + err);
+    console.error("Exiting...");
+  });
 
 const app = new Hono()
   .get("/doc", (c) => c.json(openApiDoc))
