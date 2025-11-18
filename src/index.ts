@@ -25,10 +25,11 @@ db.execute("SELECT 1")
   });
 
 const app = new Hono()
+  .use("*", handleCors()) // Aplica CORS em todas as rotas
   .get("/doc", (c) => c.json(openApiDoc))
   .get("/ui", swaggerUI({ url: "/doc" }))
   .route("/auth", authRoute)
-  .use(handleCors(), handleAuth())
+  .use(handleAuth()) // Aplica auth apenas nas rotas protegidas
   .route("/user", userRoute)
   .route("/course", courseRoute)
   .route("/quiz", quizRoute)

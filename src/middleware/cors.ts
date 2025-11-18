@@ -6,12 +6,21 @@ export function handleCors(): MiddlewareHandler {
 
   const allowedOrigins = isDevelopment
     ? ["http://localhost:3000"]
-    : ["https://front-study-nine.vercel.app"];
+    : // todo move to .env
+      ["https://front-study-nine.vercel.app"];
 
   return cors({
     origin: (origin) => {
-      if (!origin) return allowedOrigins[0]; // fallback
-      return allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
+      // Para requisições sem origin (como Postman, curl), permite em desenvolvimento
+      if (!origin && isDevelopment) return allowedOrigins[0];
+
+      // Verifica se a origem está na lista de permitidas
+      if (origin && allowedOrigins.includes(origin)) {
+        return origin;
+      }
+
+      // Rejeita origens não autorizadas
+      return null;
     },
     allowMethods: ["OPTIONS", "GET", "HEAD", "PUT", "POST", "DELETE", "PATCH"],
     allowHeaders: ["Content-Type", "Authorization"],
