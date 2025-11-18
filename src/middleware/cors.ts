@@ -23,8 +23,8 @@ export function handleCors(): MiddlewareHandler {
       return null;
     },
     allowMethods: ["OPTIONS", "GET", "HEAD", "PUT", "POST", "DELETE", "PATCH"],
-    allowHeaders: ["Content-Type", "Authorization"],
-    exposeHeaders: ["content-disposition"],
+    allowHeaders: ["Content-Type", "Authorization", "Cookie"],
+    exposeHeaders: ["content-disposition", "Set-Cookie"],
     credentials: true, // fundamental para permitir cookies
     maxAge: 86400,
   });
