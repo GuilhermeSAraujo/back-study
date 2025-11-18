@@ -6,7 +6,7 @@ export function handleCors(): MiddlewareHandler {
 
   const allowedOrigins = isDevelopment
     ? ["http://localhost:3000"]
-    : ["https://seu-front-de-producao.com"];
+    : ["https://front-study-nine.vercel.app"];
 
   return cors({
     origin: (origin) => {
