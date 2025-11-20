@@ -4,10 +4,9 @@ import { cors } from "hono/cors";
 export function handleCors(): MiddlewareHandler {
   const isDevelopment = process.env["ENVIRONMENT"] === "development";
 
-  const allowedOrigins = isDevelopment
-    ? ["http://localhost:3000"]
-    : // todo move to .env
-      ["https://front-study-nine.vercel.app"];
+  // Get allowed origins from environment variable or use defaults
+  const frontendUrl = process.env["FRONTEND_URL"] || "https://front-study-nine.vercel.app";
+  const allowedOrigins = isDevelopment ? ["http://localhost:3000"] : [frontendUrl];
 
   return cors({
     origin: (origin) => {

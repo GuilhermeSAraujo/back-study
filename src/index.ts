@@ -1,8 +1,6 @@
-// Load environment variables BEFORE any other imports
+// Load environment variables first (only in development, not on Vercel)
 import "./env";
 
-import { serve } from "@hono/node-server";
-import { swaggerUI } from "@hono/swagger-ui";
 import { Hono } from "hono";
 import { handleCors } from "./middleware/cors";
 import { userRoute } from "./user/user.route";
@@ -13,34 +11,24 @@ import { quizRoute } from "./quiz/quiz.route";
 import { onError } from "./middleware/error";
 import { authRoute } from "./auth/auth.route";
 import { handleAuth } from "./middleware/auth";
+import { swaggerUI } from "@hono/swagger-ui";
 
+// Database connection check
 db.execute("SELECT 1")
-  .then((res) => {
-    console.info("Database connected!");
-  })
-  .catch((err) => {
-    console.error("Database connection failed 🚨");
-    console.error("Database error: " + err);
-    console.error("Exiting...");
-  });
+  .then(() => console.info("Database connected!"))
+  .catch((err) => console.error("Database connection failed:", err));
 
 const app = new Hono()
-  .use("*", handleCors()) // Aplica CORS em todas as rotas
+  .use("*", handleCors())
   .get("/doc", (c) => c.json(openApiDoc))
   .get("/ui", swaggerUI({ url: "/doc" }))
   .route("/auth", authRoute)
-  .use(handleAuth()) // Aplica auth apenas nas rotas protegidas
+  .use(handleAuth())
   .route("/user", userRoute)
   .route("/course", courseRoute)
   .route("/quiz", quizRoute)
   .onError(onError);
 
-serve(
-  {
-    fetch: app.fetch,
-    port: 3001,
-  },
-  (info) => {
-    console.log(`Server is running on http://localhost:${info.port}`);
-  }
-);
+// Remover o serve() - não funciona na Vercel
+
+export default app;
