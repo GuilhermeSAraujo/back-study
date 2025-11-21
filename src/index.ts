@@ -1,6 +1,3 @@
-// Load environment variables first (only in development, not on Vercel)
-import "./env";
-
 import { Hono } from "hono";
 import { handleCors } from "./middleware/cors";
 import { userRoute } from "./user/user.route";
