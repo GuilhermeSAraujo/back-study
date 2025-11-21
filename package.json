@@ -3,9 +3,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc && tsc-alias",
+    "build": "tsc && ts-add-js-extension add --dir=dist",
     "start": "node dist/server.js",
-    "vercel-build": "tsc && tsc-alias",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
