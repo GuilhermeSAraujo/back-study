@@ -1,11 +1,11 @@
 import { and, eq } from "drizzle-orm";
 import { Hono } from "hono";
-import { authGoogleJsonInput } from "./auth.input";
-import { jsonValidator } from "../middleware/validator";
-import { db } from "../database/db";
-import { authUsers } from "../database/schemas/auth-users";
-import { userQuota } from "../database/schemas/user-quota";
-import { Quota } from "../domain/quota";
+import { authGoogleJsonInput } from "./auth.input.js";
+import { jsonValidator } from "../middleware/validator.js";
+import { db } from "../database/db.js";
+import { authUsers } from "../database/schemas/auth-users.js";
+import { userQuota } from "../database/schemas/user-quota.js";
+import { Quota } from "../domain/quota.js";
 
 export const authRoute = new Hono().post(
   "/google",

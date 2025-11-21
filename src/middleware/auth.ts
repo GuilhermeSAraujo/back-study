@@ -1,7 +1,7 @@
 import type { MiddlewareHandler } from "hono";
 import { getCookie } from "hono/cookie";
 import { decode } from "next-auth/jwt";
-import { AuthContext, JWTPayload } from "../hono/context";
+import { AuthContext, JWTPayload } from "../hono/context.js";
 
 export const handleAuth = (): MiddlewareHandler<AuthContext> => {
   return async (c, next) => {

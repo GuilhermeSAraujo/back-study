@@ -1,5 +1,5 @@
 import type { Context } from "hono";
-import { HttpError, InternalServerError } from "../utils/throw-error";
+import { HttpError, InternalServerError } from "../utils/throw-error.js";
 
 export function onError(err: Error, c: Context) {
   // Erros internos de configuração - não expor detalhes ao usuário

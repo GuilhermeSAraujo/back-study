@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import { pgTable, unique } from "drizzle-orm/pg-core";
-import { getBaseTimestampColumns } from "./helpers";
+import { getBaseTimestampColumns } from "./helpers.js";
 
 export const authUsers = pgTable(
   "auth_users",

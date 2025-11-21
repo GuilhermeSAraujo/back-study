@@ -1,6 +1,6 @@
 import type { MiddlewareHandler } from "hono";
 import { z } from "zod/v4";
-import { HttpError } from "../utils/throw-error";
+import { HttpError } from "../utils/throw-error.js";
 
 const jsonRegex = /^application\/([a-z-\.]+\+)?json(;\s*[a-zA-Z0-9\-]+\=([^;]+))*$/;
 

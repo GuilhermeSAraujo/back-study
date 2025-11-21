@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import { pgTable, integer } from "drizzle-orm/pg-core";
-import { getBaseTimestampColumns } from "./helpers";
-import { authUsers } from "./auth-users";
+import { getBaseTimestampColumns } from "./helpers.js";
+import { authUsers } from "./auth-users.js";
 
 export const userQuota = pgTable("user_quota", (t) => ({
   id: t

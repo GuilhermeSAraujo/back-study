@@ -1,8 +1,8 @@
 import { sql } from "drizzle-orm";
 import { pgTable, integer, timestamp } from "drizzle-orm/pg-core";
-import { getBaseTimestampColumns } from "./helpers";
-import { authUsers } from "./auth-users";
-import { quizzes } from "./quizzes";
+import { getBaseTimestampColumns } from "./helpers.js";
+import { authUsers } from "./auth-users.js";
+import { quizzes } from "./quizzes.js";
 
 // Schema para armazenar os resultados da execução do quiz
 export const quizResults = pgTable("quiz_results", (t) => ({

@@ -1,16 +1,16 @@
 import { and, eq } from "drizzle-orm";
 import { Hono } from "hono";
-import { db } from "../database/db";
-import { quizzes } from "../database/schemas/quizzes";
-import { userQuota } from "../database/schemas/user-quota";
-import { buildQuizPrompt, getCourseById, getTopicById } from "../domain/courses";
-import { AuthContext } from "../hono/context";
-import { onError } from "../middleware/error";
-import { jsonValidator } from "../middleware/validator";
-import { QuizResponse, generateJsonContent } from "../utils/ai";
-import { HttpError } from "../utils/throw-error";
-import { createQuizJsonInput, quizResultJsonInput } from "./quiz.input";
-import { quizResults } from "../database/schemas/quiz-results";
+import { db } from "../database/db.js";
+import { quizzes } from "../database/schemas/quizzes.js";
+import { userQuota } from "../database/schemas/user-quota.js";
+import { buildQuizPrompt, getCourseById, getTopicById } from "../domain/courses.js";
+import { AuthContext } from "../hono/context.js";
+import { onError } from "../middleware/error.js";
+import { jsonValidator } from "../middleware/validator.js";
+import { QuizResponse, generateJsonContent } from "../utils/ai.js";
+import { HttpError } from "../utils/throw-error.js";
+import { createQuizJsonInput, quizResultJsonInput } from "./quiz.input.js";
+import { quizResults } from "../database/schemas/quiz-results.js";
 
 export const quizRoute = new Hono<AuthContext>()
   .post("/", jsonValidator(createQuizJsonInput), async (c) => {
