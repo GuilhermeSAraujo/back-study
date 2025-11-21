@@ -26,4 +26,3 @@ export const quizResults = pgTable("quiz_results", (t) => ({
   completedAt: t.timestamp({ withTimezone: true, precision: 2 }),
   ...getBaseTimestampColumns(t),
 }));
-

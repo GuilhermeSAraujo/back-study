@@ -51,6 +51,9 @@ importers:
       drizzle-kit:
         specifier: ^0.30.0
         version: 0.30.6
+      ts-add-js-extension:
+        specifier: ^1.6.6
+        version: 1.6.6
       tsc-alias:
         specifier: ^1.8.16
         version: 1.8.16
@@ -1247,6 +1250,10 @@ packages:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
 
+  ts-add-js-extension@1.6.6:
+    resolution: {integrity: sha512-rPOBNrOULi/CjVHraGrDa0vuWDmuMszmIXGNaGe2UGfrBH0/bZWTTsh82uQ+INKp9cJYziKNTCG2knzBlWvW4A==}
+    hasBin: true
+
   tsc-alias@1.8.16:
     resolution: {integrity: sha512-QjCyu55NFyRSBAl6+MTFwplpFcnm2Pq01rR/uxfqJoLMm6X3O14KEGtaSDZpJYaE1bJBGDjD0eSuiIWPe2T58g==}
     engines: {node: '>=16.20.2'}
@@ -2148,6 +2155,10 @@ snapshots:
   to-regex-range@5.0.1:
     dependencies:
       is-number: 7.0.0
+
+  ts-add-js-extension@1.6.6:
+    dependencies:
+      typescript: 5.9.3
 
   tsc-alias@1.8.16:
     dependencies:
