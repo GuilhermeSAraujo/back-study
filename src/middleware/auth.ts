@@ -12,7 +12,18 @@ export const handleAuth = (): MiddlewareHandler<AuthContext> => {
         return c.json({ error: "Server configuration error" }, 500);
       }
 
-      const sessionToken = getCookie(c, "next-auth.session-token");
+      let sessionToken: string | undefined;
+
+      // First, check for Authorization header (for cross-domain requests)
+      const authHeader = c.req.header("Authorization");
+      if (authHeader?.startsWith("Bearer ")) {
+        sessionToken = authHeader.substring(7); // Remove "Bearer " prefix
+      }
+
+      // Fallback to cookie (for same-domain or local development)
+      if (!sessionToken) {
+        sessionToken = getCookie(c, "next-auth.session-token");
+      }
 
       if (!sessionToken) {
         return c.json({ message: "Unauthorized - No session token found" }, { status: 401 });
