@@ -1,16 +1,16 @@
 import { and, eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { db } from "../database/db";
+import { quizResults } from "../database/schemas/quiz-results";
 import { quizzes } from "../database/schemas/quizzes";
 import { userQuota } from "../database/schemas/user-quota";
-import { buildQuizPrompt, getCourseById, getTopicById } from "../domain/courses";
+import { getCourseById, getTopicById } from "../domain/courses";
 import { AuthContext } from "../hono/context";
 import { onError } from "../middleware/error";
 import { jsonValidator } from "../middleware/validator";
-import { QuizResponse, generateJsonContent } from "../utils/ai";
 import { HttpError } from "../utils/throw-error";
+import { QuizCreationQueue, getPendingQuizzes } from "./job/queue";
 import { createQuizJsonInput, quizResultJsonInput } from "./quiz.input";
-import { quizResults } from "../database/schemas/quiz-results";
 
 export const quizRoute = new Hono<AuthContext>()
   .post("/", jsonValidator(createQuizJsonInput), async (c) => {
@@ -40,51 +40,15 @@ export const quizRoute = new Hono<AuthContext>()
       throw new HttpError("Quota insuficiente para criar o quiz", 403);
     }
 
-    const prompt = buildQuizPrompt(
-      selectedCourse.name,
-      selectedTopic.name,
+    QuizCreationQueue.push({
+      userId: user.id,
+      course: selectedCourse,
+      topic: selectedTopic,
       difficulty,
-      additionalInfo
-    );
+      additionalInfo,
+    });
 
-    const quizData = await generateJsonContent<QuizResponse>(prompt);
-
-    if (!quizData.questions || !Array.isArray(quizData.questions)) {
-      throw new HttpError("Resposta do Gemini não contém questões válidas", 500);
-    }
-
-    const [savedQuiz] = await db
-      .insert(quizzes)
-      .values({
-        userId: user.id,
-        courseId: course,
-        courseName: selectedCourse.name,
-        topicId: topic,
-        topicName: selectedTopic.name,
-        difficulty: difficulty,
-        questions: quizData.questions,
-        additionalInfo: additionalInfo || null,
-      })
-      .returning();
-
-    return c.json(
-      {
-        id: savedQuiz.id,
-        course: {
-          id: savedQuiz.courseId,
-          name: savedQuiz.courseName,
-        },
-        topic: {
-          id: savedQuiz.topicId,
-          name: savedQuiz.topicName,
-        },
-        difficulty: savedQuiz.difficulty,
-        questions: savedQuiz.questions,
-        additionalInfo: savedQuiz.additionalInfo,
-        createdAt: savedQuiz.createdAt?.toISOString() || new Date().toISOString(),
-      },
-      201
-    );
+    return c.json({}, 201);
   })
   .get("/", async (c) => {
     const user = c.get("user");
@@ -113,7 +77,22 @@ export const quizRoute = new Hono<AuthContext>()
       )
       .where(eq(quizzes.userId, user.id));
 
-    return c.json(userQuizzes);
+    const pendingQuizzes = getPendingQuizzes(user.id).map((task, index) => ({
+      id: `pending-${index}`,
+      courseId: task.course.id,
+      courseName: task.course.name,
+      topicId: task.topic.id,
+      topicName: task.topic.name,
+      difficulty: task.difficulty,
+      questions: [],
+      additionalInfo: task.additionalInfo || null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null,
+      status: "Em criação",
+    }));
+
+    return c.json([...pendingQuizzes, ...userQuizzes]);
   })
   .get("/:id", async (c) => {
     const user = c.get("user");

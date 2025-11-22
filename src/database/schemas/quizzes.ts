@@ -6,6 +6,7 @@ import { getBaseTimestampColumns } from "./helpers";
 
 // Enum para dificuldade
 export const difficultyEnum = pgEnum("difficulty", ["iniciante", "medio", "dificil"]);
+export type Difficulty = (typeof difficultyEnum.enumValues)[number];
 
 // Schema para armazenar os quizzes criados
 export const quizzes = pgTable("quizzes", (t) => ({

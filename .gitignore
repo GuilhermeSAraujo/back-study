@@ -31,3 +31,5 @@ dist/
 # misc
 .DS_Store
 .vercel
+
+.vscode/settings.json
