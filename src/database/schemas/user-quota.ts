@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import { pgTable, integer } from "drizzle-orm/pg-core";
-import { getBaseTimestampColumns } from "./helpers.js";
-import { authUsers } from "./auth-users.js";
+import { getBaseTimestampColumns } from "./helpers";
+import { user } from "./auth-users";
 
 export const userQuota = pgTable("user_quota", (t) => ({
   id: t
@@ -9,9 +9,9 @@ export const userQuota = pgTable("user_quota", (t) => ({
     .default(sql`gen_random_uuid()`)
     .primaryKey(),
   userId: t
-    .uuid()
+    .varchar()
     .notNull()
-    .references(() => authUsers.id),
+    .references(() => user.id),
   purchased: t.integer().notNull().default(0),
   consumed: t.integer().notNull().default(0),
   ...getBaseTimestampColumns(t),

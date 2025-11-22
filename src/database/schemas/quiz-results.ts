@@ -1,8 +1,8 @@
 import { sql } from "drizzle-orm";
-import { pgTable, integer, timestamp } from "drizzle-orm/pg-core";
-import { getBaseTimestampColumns } from "./helpers.js";
-import { authUsers } from "./auth-users.js";
-import { quizzes } from "./quizzes.js";
+import { pgTable } from "drizzle-orm/pg-core";
+import { getBaseTimestampColumns } from "./helpers";
+import { quizzes } from "./quizzes";
+import { user } from "./auth-users";
 
 // Schema para armazenar os resultados da execução do quiz
 export const quizResults = pgTable("quiz_results", (t) => ({
@@ -15,9 +15,9 @@ export const quizResults = pgTable("quiz_results", (t) => ({
     .notNull()
     .references(() => quizzes.id),
   userId: t
-    .uuid()
+    .varchar()
     .notNull()
-    .references(() => authUsers.id),
+    .references(() => user.id),
   answers: t.jsonb().notNull(), // Array com as respostas do usuário: [{ questionId, selectedAnswer }]
   totalQuestions: t.integer().notNull(),
   correctAnswers: t.integer().notNull(),

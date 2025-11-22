@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { AuthContext } from "../hono/context.js";
+import { AuthContext } from "../hono/context";
 
 export const userRoute = new Hono<AuthContext>().get("/quota", async (c) => {
   const user = c.get("user");

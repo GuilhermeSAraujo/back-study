@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { InternalServerError } from "./throw-error.js";
+import { InternalServerError } from "./throw-error";
 
 export interface QuizQuestionOptions {
   A: string;

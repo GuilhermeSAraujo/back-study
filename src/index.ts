@@ -1,13 +1,12 @@
 import { Hono } from "hono";
-import { handleCors } from "./middleware/cors.js";
-import { userRoute } from "./user/user.route.js";
-import { openApiDoc } from "./utils/swagger.js";
-import { db } from "./database/db.js";
-import { courseRoute } from "./course/course.route.js";
-import { quizRoute } from "./quiz/quiz.route.js";
-import { onError } from "./middleware/error.js";
-import { authRoute } from "./auth/auth.route.js";
-import { handleAuth } from "./middleware/auth.js";
+import { handleCors } from "./middleware/cors";
+import { userRoute } from "./user/user.route";
+import { openApiDoc } from "./utils/swagger";
+import { db } from "./database/db";
+import { courseRoute } from "./course/course.route";
+import { quizRoute } from "./quiz/quiz.route";
+import { onError } from "./middleware/error";
+import { handleAuth } from "./middleware/auth";
 import { swaggerUI } from "@hono/swagger-ui";
 
 // Database connection check
@@ -19,7 +18,6 @@ const app = new Hono()
   .use("*", handleCors())
   .get("/doc", (c) => c.json(openApiDoc))
   .get("/ui", swaggerUI({ url: "/doc" }))
-  .route("/auth", authRoute)
   .use(handleAuth())
   .route("/user", userRoute)
   .route("/course", courseRoute)

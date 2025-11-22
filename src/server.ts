@@ -1,9 +1,9 @@
 // Load environment variables first for local development
-import "./env.js";
+import "./env";
 
 // Start the local development server
 import { serve } from "@hono/node-server";
-import app from "./index.js";
+import app from "./index";
 
 const port = Number(process.env["PORT"]) || 3001;
 

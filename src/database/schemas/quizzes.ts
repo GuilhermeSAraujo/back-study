@@ -1,8 +1,8 @@
 import { sql } from "drizzle-orm";
-import { pgTable, varchar, jsonb, pgEnum } from "drizzle-orm/pg-core";
-import { getBaseTimestampColumns } from "./helpers.js";
-import { authUsers } from "./auth-users.js";
-import { QuizQuestion } from "../../utils/ai.js";
+import { pgEnum, pgTable } from "drizzle-orm/pg-core";
+import { QuizQuestion } from "../../utils/ai";
+import { user } from "./auth-users";
+import { getBaseTimestampColumns } from "./helpers";
 
 // Enum para dificuldade
 export const difficultyEnum = pgEnum("difficulty", ["iniciante", "medio", "dificil"]);
@@ -14,9 +14,9 @@ export const quizzes = pgTable("quizzes", (t) => ({
     .default(sql`gen_random_uuid()`)
     .primaryKey(),
   userId: t
-    .uuid()
+    .varchar()
     .notNull()
-    .references(() => authUsers.id),
+    .references(() => user.id),
   courseId: t.varchar().notNull(),
   courseName: t.varchar().notNull(),
   topicId: t.varchar().notNull(),

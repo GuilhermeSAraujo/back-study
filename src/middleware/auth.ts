@@ -1,17 +1,12 @@
 import type { MiddlewareHandler } from "hono";
-import { getCookie } from "hono/cookie";
-import { decode } from "next-auth/jwt";
-import { AuthContext, JWTPayload } from "../hono/context.js";
+import { AuthContext } from "../hono/context";
+import { db } from "../database/db";
+import { session, user } from "../database/schemas/auth-users";
+import { eq } from "drizzle-orm";
 
 export const handleAuth = (): MiddlewareHandler<AuthContext> => {
   return async (c, next) => {
     try {
-      const secret = process.env["NEXTAUTH_SECRET"];
-      if (!secret) {
-        console.error("NEXTAUTH_SECRET não está definido!");
-        return c.json({ error: "Server configuration error" }, 500);
-      }
-
       let sessionToken: string | undefined;
 
       // First, check for Authorization header (for cross-domain requests)
@@ -20,38 +15,32 @@ export const handleAuth = (): MiddlewareHandler<AuthContext> => {
         sessionToken = authHeader.substring(7); // Remove "Bearer " prefix
       }
 
-      // Fallback to cookie (for same-domain or local development)
-      if (!sessionToken) {
-        sessionToken = getCookie(c, "next-auth.session-token");
-      }
-
       if (!sessionToken) {
         return c.json({ message: "Unauthorized - No session token found" }, { status: 401 });
       }
 
-      const _token = await decode({
-        token: sessionToken,
-        secret,
-      });
+      // Verify session in database
+      const [sessionData] = await db
+        .select({
+          user: user,
+          session: session,
+        })
+        .from(session)
+        .innerJoin(user, eq(session.userId, user.id))
+        .where(eq(session.token, sessionToken));
 
-      if (!_token) {
+      if (!sessionData) {
         return c.json({ message: "Unauthorized - Invalid token" }, { status: 401 });
       }
 
-      const token = _token as JWTPayload;
-      c.set("jwtPayload", token);
+      const { session: currentSession, user: currentUser } = sessionData;
 
-      if (!token.id || !token.email) {
-        return c.json(
-          {
-            error: "Unauthorized - Invalid token structure",
-            debug: { tokenKeys: Object.keys(token || {}) },
-          },
-          401
-        );
+      // Check if session is expired
+      if (new Date() > currentSession.expiresAt) {
+        return c.json({ message: "Unauthorized - Session expired" }, { status: 401 });
       }
 
-      c.set("user", { id: token.id, email: token.email });
+      c.set("user", { id: currentUser.id, email: currentUser.email });
       await next();
     } catch (err) {
       console.error("Auth error:", err);
