@@ -6,11 +6,11 @@ import { quizzes } from "../database/schemas/quizzes";
 import { userQuota } from "../database/schemas/user-quota";
 import { getCourseById, getTopicById } from "../domain/courses";
 import { AuthContext } from "../hono/context";
-import { onError } from "../middleware/error";
-import { jsonValidator } from "../middleware/validator";
+import { jsonValidator, routeValidator } from "../middleware/validator";
 import { HttpError } from "../utils/throw-error";
 import { QuizCreationQueue, getPendingQuizzes } from "./job/queue";
-import { createQuizJsonInput, quizResultJsonInput } from "./quiz.input";
+import { createQuizJsonInput, deleteQuizRouteParam, quizResultJsonInput } from "./quiz.input";
+import { resultRoute } from "./result/result.route";
 
 export const quizRoute = new Hono<AuthContext>()
   .post("/", jsonValidator(createQuizJsonInput), async (c) => {
@@ -192,4 +192,20 @@ export const quizRoute = new Hono<AuthContext>()
       201
     );
   })
-  .onError(onError);
+  .delete("/:id", routeValidator(deleteQuizRouteParam), async (c) => {
+    const user = c.get("user");
+    const quizId = c.req.param("id");
+
+    const quiz = await db.query.quizzes.findFirst({
+      where: (quiz, { and, eq }) => and(eq(quiz.id, quizId), eq(quiz.userId, user.id)),
+    });
+
+    if (!quiz) {
+      throw new HttpError("Quiz não encontrado", 404);
+    }
+
+    await db.delete(quizzes).where(eq(quizzes.id, quizId));
+
+    return c.json({ message: "Quiz deletado com sucesso!" });
+  })
+  .route("/result", resultRoute);

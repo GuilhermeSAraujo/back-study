@@ -17,3 +17,7 @@ export const quizResultJsonInput = z4.object({
     })
   ),
 });
+
+export const deleteQuizRouteParam = z4.object({
+  id: z4.string("Id é necessário"),
+});

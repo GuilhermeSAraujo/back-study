@@ -66,3 +66,29 @@ export function queryValidator<T extends z.ZodType>(
     await next();
   };
 }
+
+export function routeValidator<T extends z.ZodType>(
+  schema: T
+): MiddlewareHandler<
+  any,
+  any,
+  {
+    in: { param: z.input<T> };
+    out: { param: z.output<T> };
+  }
+> {
+  return async (c, next) => {
+    const params = c.req.param();
+
+    const result = await schema.safeParseAsync(params);
+
+    if (!result.success) {
+      console.error("Parâmetros de rota inválidos", { error: result.error });
+      throw new HttpError("Parâmetros de rota inválidos", 400);
+    }
+
+    c.req.addValidatedData("param", result.data as never);
+
+    await next();
+  };
+}

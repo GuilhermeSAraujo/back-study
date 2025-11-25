@@ -13,7 +13,7 @@ export const quizResults = pgTable("quiz_results", (t) => ({
   quizId: t
     .uuid()
     .notNull()
-    .references(() => quizzes.id),
+    .references(() => quizzes.id, { onDelete: "cascade" }),
   userId: t
     .varchar()
     .notNull()
