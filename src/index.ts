@@ -1,13 +1,14 @@
+import { swaggerUI } from "@hono/swagger-ui";
 import { Hono } from "hono";
+import { courseRoute } from "./course/course.route";
+import { dashboardRoute } from "./dashboard/dashboard.route";
+import { db } from "./database/db";
+import { handleAuth } from "./middleware/auth";
 import { handleCors } from "./middleware/cors";
+import { onError } from "./middleware/error";
+import { quizRoute } from "./quiz/quiz.route";
 import { userRoute } from "./user/user.route";
 import { openApiDoc } from "./utils/swagger";
-import { db } from "./database/db";
-import { courseRoute } from "./course/course.route";
-import { quizRoute } from "./quiz/quiz.route";
-import { onError } from "./middleware/error";
-import { handleAuth } from "./middleware/auth";
-import { swaggerUI } from "@hono/swagger-ui";
 
 // Database connection check
 db.execute("SELECT 1")
@@ -22,6 +23,7 @@ const app = new Hono()
   .route("/user", userRoute)
   .route("/course", courseRoute)
   .route("/quiz", quizRoute)
+  .route("/dashboard", dashboardRoute)
   .onError(onError);
 
 // Remover o serve() - não funciona na Vercel
